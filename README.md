@@ -38,7 +38,12 @@ Maven (build tool)
 
 📊 Languages Used
 
-LanguagePurposeJavaBackend logic — models, repositories, services, REST controllersHTMLStatic frontend pages (homepage, shop, cart, login, dashboard, admin)CSSStyling for all static pagesJavaScriptFrontend interactivity (cart, search, API calls)SQLDatabase schema setup (database-setup.sql)PropertiesApp configuration (application.properties)
+LanguagePurposeJavaBackend logic — models, repositories, services, REST controllers
+HTMLStatic frontend pages (homepage, shop, cart, login, dashboard, admin)
+CSS Styling for all static pages
+JavaScriptFrontend interactivity (cart, search, API calls)
+SQLDatabase schema setup (database-setup.sql)
+PropertiesApp configuration (application.properties)
 
 📱 Installation
 
