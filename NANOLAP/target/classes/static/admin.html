@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - NANOLAP</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="loadingScreen" class="loading-screen">
+  <div class="loading-logo">NANOLAP</div>
+  <div class="loading-bar"><div class="loading-fill"></div></div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">NANOLAP</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="admin.html" class="active">Admin</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="cart.html" class="cart-btn">🛒 Store</a>
+    <button onclick="logout()" class="btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Logout</button>
+    <div class="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div style="font-family:var(--font-display);font-size:0.7rem;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;margin-bottom:1.5rem">Admin Panel</div>
+    <ul class="sidebar-menu">
+      <li><a href="#" onclick="showSection('dashboard')" class="active" id="nav-dashboard">📊 Dashboard</a></li>
+      <li><a href="#" onclick="showSection('products')" id="nav-products">📦 Products</a></li>
+      <li><a href="#" onclick="showSection('orders')" id="nav-orders">🛒 Orders</a></li>
+      <li><a href="#" onclick="showSection('add-product')" id="nav-add-product">➕ Add Product</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-content">
+
+    <!-- Dashboard -->
+    <div id="section-dashboard">
+      <h1 style="font-family:var(--font-heading);font-size:1.8rem;margin-bottom:0.5rem">Dashboard</h1>
+      <p style="color:var(--text-secondary);margin-bottom:2rem">NANOLAP store overview</p>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">Total Products</div>
+          <div class="stat-card-value" id="totalProducts">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Total Orders</div>
+          <div class="stat-card-value" id="totalOrders">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Categories</div>
+          <div class="stat-card-value" id="totalCats">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Status</div>
+          <div class="stat-card-value" style="font-size:1.2rem;color:var(--accent-green)">● LIVE</div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:1.5rem;margin-top:1rem">
+        <div style="font-family:var(--font-heading);font-weight:700;margin-bottom:1rem">Recent Orders</div>
+        <div id="recentOrders"><div style="color:var(--text-muted);font-size:0.9rem">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div id="section-products" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+        <h1 style="font-family:var(--font-heading);font-size:1.8rem">Products</h1>
+        <button class="btn-primary" onclick="showSection('add-product')">+ Add Product</button>
+      </div>
+      <div style="overflow-x:auto;background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px">
+        <table class="data-table" id="productsTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Product</th><th>Category</th><th>Brand</th><th>Price</th><th>Stock</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div id="section-orders" style="display:none">
+      <h1 style="font-family:var(--font-heading);font-size:1.8rem;margin-bottom:1.5rem">Orders</h1>
+      <div style="overflow-x:auto;background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order #</th><th>Customer</th><th>Email</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add Product -->
+    <div id="section-add-product" style="display:none">
+      <h1 style="font-family:var(--font-heading);font-size:1.8rem;margin-bottom:1.5rem">Add New Product</h1>
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:2rem;max-width:700px">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Product Name *</label>
+            <input type="text" class="form-input" id="pName" placeholder="e.g. Samsung Galaxy S24">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Brand *</label>
+            <input type="text" class="form-input" id="pBrand" placeholder="e.g. Samsung">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input" id="pDesc" rows="3" placeholder="Product description..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Price (Rs.) *</label>
+            <input type="number" class="form-input" id="pPrice" placeholder="e.g. 89999">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Original Price (Rs.)</label>
+            <input type="number" class="form-input" id="pOrigPrice" placeholder="e.g. 99999">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select class="form-input" id="pCategory">
+              <option value="">-- Select --</option>
+              <option>Smartphones</option>
+              <option>Laptops</option>
+              <option>Audio</option>
+              <option>Tablets</option>
+              <option>TVs</option>
+              <option>Monitors</option>
+              <option>Accessories</option>
+              <option>Cameras</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stock Quantity *</label>
+            <input type="number" class="form-input" id="pStock" placeholder="e.g. 10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Storage</label>
+          <input type="text" class="form-input" id="pStorage" placeholder="e.g. 128GB, 256GB">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image URL</label>
+          <input type="url" class="form-input" id="pImage" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;margin-top:1.5rem">
+            <input type="checkbox" id="pFeatured" style="accent-color:var(--accent-cyan);width:16px;height:16px">
+            <span class="form-label" style="margin:0">Featured Product</span>
+          </label>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:0.5rem">
+          <button class="btn-primary" onclick="addProduct()">➕ Add Product</button>
+          <button class="btn-outline" onclick="clearForm()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast" class="toast"><span class="toast-icon">✅</span><span class="toast-text"></span></div>
+
+<script src="js/main.js"></script>
+<script>
+function showSection(name) {
+  ['dashboard','products','orders','add-product'].forEach(s => {
+    document.getElementById(`section-${s}`).style.display = 'none';
+    const nav = document.getElementById(`nav-${s}`);
+    if (nav) nav.classList.remove('active');
+  });
+  document.getElementById(`section-${name}`).style.display = 'block';
+  const nav = document.getElementById(`nav-${name}`);
+  if (nav) nav.classList.add('active');
+
+  if (name === 'products') loadAdminProducts();
+  if (name === 'orders') loadOrders();
+  if (name === 'dashboard') loadDashboard();
+}
+
+async function loadDashboard() {
+  try {
+    const [products, orders, cats] = await Promise.all([
+      fetch(`${API}/products`).then(r => r.json()),
+      fetch(`${API}/orders`).then(r => r.json()),
+      fetch(`${API}/products/categories`).then(r => r.json())
+    ]);
+
+    document.getElementById('totalProducts').textContent = products.length;
+    document.getElementById('totalOrders').textContent = orders.length;
+    document.getElementById('totalCats').textContent = cats.length;
+
+    const recent = orders.slice(0, 5);
+    document.getElementById('recentOrders').innerHTML = recent.length === 0
+      ? '<div style="color:var(--text-muted);font-size:0.9rem">No orders yet.</div>'
+      : recent.map(o => `
+          <div style="display:flex;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid var(--border-color);font-size:0.9rem">
+            <div>
+              <span style="font-family:var(--font-heading);font-weight:600">${o.orderNumber}</span>
+              <span style="color:var(--text-secondary);margin-left:1rem">${o.customerName}</span>
+            </div>
+            <div style="display:flex;gap:1rem;align-items:center">
+              <span style="color:var(--accent-cyan);font-family:var(--font-heading)">Rs. ${Number(o.totalAmount).toLocaleString()}</span>
+              <span class="status-badge status-${o.status.toLowerCase()}">${o.status}</span>
+            </div>
+          </div>`).join('');
+  } catch(e) {
+    document.getElementById('totalProducts').textContent = '⚠️';
+  }
+}
+
+async function loadAdminProducts() {
+  try {
+    const products = await fetch(`${API}/products`).then(r => r.json());
+    const tbody = document.getElementById('productsBody');
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td style="color:var(--text-muted)">#${p.id}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <img src="${p.imageUrl || ''}" style="width:40px;height:40px;object-fit:contain;background:#0d0d1f;border-radius:6px;padding:4px" onerror="this.style.display='none'">
+            <span style="color:var(--text-primary);font-size:0.9rem">${p.name.substring(0,40)}</span>
+          </div>
+        </td>
+        <td>${p.category}</td>
+        <td>${p.brand || '—'}</td>
+        <td style="color:var(--accent-cyan);font-family:var(--font-heading)">Rs. ${Number(p.price).toLocaleString()}</td>
+        <td><span style="color:${p.stockQuantity > 0 ? 'var(--accent-green)' : 'var(--accent-pink)'}">${p.stockQuantity}</span></td>
+        <td>
+          <button onclick="deleteProduct(${p.id})" style="background:rgba(255,45,120,0.1);border:1px solid rgba(255,45,120,0.3);color:var(--accent-pink);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.8rem">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('productsBody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem">Server error</td></tr>';
+  }
+}
+
+async function loadOrders() {
+  try {
+    const orders = await fetch(`${API}/orders`).then(r => r.json());
+    const tbody = document.getElementById('ordersBody');
+    if (orders.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem">No orders yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = orders.map(o => `
+      <tr>
+        <td style="font-family:var(--font-display);font-size:0.75rem;color:var(--accent-cyan)">${o.orderNumber}</td>
+        <td>${o.customerName}</td>
+        <td style="color:var(--text-muted)">${o.customerEmail}</td>
+        <td style="color:var(--accent-cyan);font-family:var(--font-heading);font-weight:600">Rs. ${Number(o.totalAmount || 0).toLocaleString()}</td>
+        <td>${o.paymentMethod || '—'}</td>
+        <td>
+          <select class="form-input" style="padding:4px 8px;font-size:0.8rem" onchange="updateOrderStatus(${o.id}, this.value)">
+            <option value="PENDING" ${o.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+            <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'selected' : ''}>Processing</option>
+            <option value="COMPLETED" ${o.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
+          </select>
+        </td>
+        <td style="color:var(--text-muted);font-size:0.8rem">${new Date(o.createdAt).toLocaleDateString('en-LK')}</td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('ordersBody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem">Server error</td></tr>';
+  }
+}
+
+async function updateOrderStatus(orderId, status) {
+  try {
+    const res = await fetch(`${API}/orders/${orderId}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    if (res.ok) {
+      showToast('Order status updated successfully!');
+    } else {
+      showToast('Failed to update order status!', true);
+    }
+  } catch(e) {
+    showToast('Server error!', true);
+  }
+}
+
+async function addProduct() {
+  const name = document.getElementById('pName').value.trim();
+  const brand = document.getElementById('pBrand').value.trim();
+  const desc = document.getElementById('pDesc').value.trim();
+  const price = parseFloat(document.getElementById('pPrice').value);
+  const origPrice = parseFloat(document.getElementById('pOrigPrice').value) || null;
+  const category = document.getElementById('pCategory').value;
+  const stock = parseInt(document.getElementById('pStock').value) || 0;
+  const storage = document.getElementById('pStorage').value.trim();
+  const image = document.getElementById('pImage').value.trim();
+  const featured = document.getElementById('pFeatured').checked;
+
+  if (!name || !brand || !category || isNaN(price)) {
+    showToast('Fill in the required fields!', true);
+    return;
+  }
+
+  const product = {
+    name, brand, description: desc, price, originalPrice: origPrice,
+    category, stockQuantity: stock, storage, imageUrl: image,
+    isFeatured: featured, isActive: true, reviewCount: 0
+  };
+
+  try {
+    const res = await fetch(`${API}/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(product)
+    });
+    if (res.ok) {
+      showToast('✅ Product successfully added!');
+      clearForm();
+    } else {
+      showToast('Could not add the product!', true);
+    }
+  } catch(e) {
+    showToast('Server error!', true);
+  }
+}
+
+function clearForm() {
+  ['pName','pBrand','pDesc','pPrice','pOrigPrice','pStock','pStorage','pImage'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('pCategory').value = '';
+  document.getElementById('pFeatured').checked = false;
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  try {
+    await fetch(`${API}/products/${id}`, { method: 'DELETE' });
+    showToast('Product deleted!');
+    loadAdminProducts();
+  } catch(e) {
+    showToast('Error deleting!', true);
+  }
+}
+
+window.logout = function() {
+  console.log('Admin logout function called');
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  console.log('Token and user removed from localStorage');
+  window.location.href = 'login.html';
+}
+
+// Load dashboard on start
+loadDashboard();
+</script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - NANOLAP</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="loadingScreen" class="loading-screen">
+  <div class="loading-logo">NANOLAP</div>
+  <div class="loading-bar"><div class="loading-fill"></div></div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">NANOLAP</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="cart.html" class="active">Cart</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="cart.html" class="cart-btn">
+      🛒 Cart <span class="cart-badge" style="display:none">0</span>
+    </a>
+    <a href="login.html" id="navLoginLink" class="btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; margin-right: 0.5rem;">Login</a>
+    <button id="navLogoutBtn" onclick="logout()" class="btn-outline" style="display:none; padding: 0.5rem 1rem; font-size: 0.85rem;">Logout</button>
+    <div class="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="cart-container">
+  <h1 style="font-family:var(--font-heading);font-size:2rem;margin-bottom:2rem">
+    🛒 Shopping Cart
+  </h1>
+
+  <div id="cartEmpty" class="empty-state" style="display:none">
+    <div class="empty-icon">🛒</div>
+    <div class="empty-title">Your cart is empty</div>
+    <div class="empty-text" style="margin-bottom:1.5rem">Add some amazing products!</div>
+    <a href="shop.html" class="btn-primary">Start Shopping</a>
+  </div>
+
+  <div id="cartContent" class="cart-grid">
+    <!-- Cart Items -->
+    <div>
+      <div id="cartItems" class="cart-items"></div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+      <div class="summary-title">Order Summary</div>
+      <div class="summary-row"><span>Subtotal</span><span id="subtotal">Rs. 0</span></div>
+      <div class="summary-row"><span>Shipping</span><span id="shipping">Rs. 350</span></div>
+      <div class="summary-row"><span>Discount</span><span id="discount" style="color:var(--accent-green)">-Rs. 0</span></div>
+      <div class="summary-total"><span>Total</span><span id="total">Rs. 0</span></div>
+      <button class="checkout-btn" onclick="openCheckout()">
+        💳 Proceed to Checkout
+      </button>
+      <p id="loginHint" style="display:none;text-align:center;margin-top:0.75rem;font-size:0.85rem;color:var(--text-secondary)">
+        <a href="login.html?redirect=cart.html" style="color:var(--accent-cyan)">Log in</a> to place an order
+      </p>
+      <a href="shop.html" style="display:block;text-align:center;margin-top:1rem;color:var(--text-secondary);text-decoration:none;font-size:0.85rem">← Continue Shopping</a>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout Modal -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal" style="max-width:520px" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="document.getElementById('checkoutModal').classList.remove('open')">✕</button>
+    <div class="modal-title">📦 Checkout</div>
+
+    <div id="checkoutStep1" style="display: block;">
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input type="text" class="form-input" id="chkName" placeholder="Your full name">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" class="form-input" id="chkEmail" placeholder="your@email.com" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone *</label>
+          <input type="tel" class="form-input" id="chkPhone" placeholder="07X XXX XXXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Shipping Address *</label>
+        <textarea class="form-input" id="chkAddress" rows="3" placeholder="No., Street, City, Province"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Method</label>
+        <select class="form-input" id="chkPayment">
+          <option value="CASH_ON_DELIVERY">Cash on Delivery</option>
+          <option value="BANK_TRANSFER">Bank Transfer</option>
+          <option value="CREDIT_CARD">Credit/Debit Card</option>
+        </select>
+      </div>
+
+      <!-- Order Items Preview -->
+      <div style="background:var(--bg-secondary);border-radius:10px;padding:1rem;margin-bottom:1.5rem">
+        <div style="font-size:0.75rem;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.75rem">Order Summary</div>
+        <div id="checkoutItemsList"></div>
+        <div style="display:flex;justify-content:space-between;padding-top:0.75rem;border-top:1px solid var(--border-color);margin-top:0.75rem;font-family:var(--font-heading);font-weight:700;color:var(--accent-cyan)">
+          <span>Total</span>
+          <span id="checkoutTotal"></span>
+        </div>
+      </div>
+
+      <button class="checkout-btn" style="margin-top:0" onclick="placeOrder()" id="placeOrderBtn">
+         Place Order
+      </button>
+    </div>
+
+    <!-- Success -->
+    <div id="orderSuccess" style="display:none;text-align:center;padding:1rem">
+      <div style="font-size:4rem;margin-bottom:1rem">🎉</div>
+      <div style="font-family:var(--font-heading);font-size:1.5rem;font-weight:700;color:var(--accent-green);margin-bottom:0.5rem">Order Placed!</div>
+      <div style="color:var(--text-secondary);margin-bottom:1rem">Your order has been confirmed!</div>
+      <div id="orderNumberDisplay" style="font-family:var(--font-display);font-size:0.9rem;color:var(--accent-cyan);background:rgba(0,212,255,0.1);padding:0.75rem;border-radius:8px;margin-bottom:1.5rem"></div>
+      <a href="shop.html" class="btn-primary" style="display:inline-block">Continue Shopping</a>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"><span class="toast-icon">✅</span><span class="toast-text"></span></div>
+
+<script src="js/main.js"></script>
+<script>
+function getLoggedInCustomer() {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (!token || user.role !== 'customer') {
+    return null;
+  }
+  return { token, user };
+}
+
+function updateNavAuth() {
+  const customer = getLoggedInCustomer();
+  document.getElementById('navLoginLink').style.display = customer ? 'none' : 'inline-block';
+  document.getElementById('navLogoutBtn').style.display = customer ? 'inline-block' : 'none';
+  document.getElementById('loginHint').style.display = customer ? 'none' : 'block';
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
+function fillCheckoutForm(user) {
+  document.getElementById('chkName').value = user.name || '';
+  document.getElementById('chkEmail').value = user.email || '';
+  document.getElementById('chkPhone').value = user.phone || '';
+  document.getElementById('chkAddress').value = user.address || '';
+}
+
+function renderCart() {
+  const cart = JSON.parse(localStorage.getItem('nanolap_cart') || '[]');
+  const empty = document.getElementById('cartEmpty');
+  const content = document.getElementById('cartContent');
+  const itemsDiv = document.getElementById('cartItems');
+
+  if (cart.length === 0) {
+    empty.style.display = 'block';
+    content.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  content.style.display = 'grid';
+
+  itemsDiv.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <img class="cart-item-img" src="${item.imageUrl || ''}" alt="${item.name}"
+           onerror="this.src='https://via.placeholder.com/90x90/131320/00d4ff?text=IMG'">
+      <div class="cart-item-info">
+        <div class="cart-item-brand">${item.brand || ''}</div>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">${formatPrice(item.price)}</div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="adjustQty(${item.id}, -1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="adjustQty(${item.id}, 1)">+</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-heading);font-weight:700;color:var(--accent-cyan);text-align:right;margin-bottom:0.5rem">
+          ${formatPrice(item.price * item.qty)}
+        </div>
+        <button class="remove-btn" onclick="removeItem(${item.id})">🗑️</button>
+      </div>
+    </div>`).join('');
+
+  updateSummary(cart);
+}
+
+function updateSummary(cart) {
+  const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+  const shipping = subtotal > 0 ? 350 : 0;
+  const total = subtotal + shipping;
+
+  document.getElementById('subtotal').textContent = formatPrice(subtotal);
+  document.getElementById('shipping').textContent = formatPrice(shipping);
+  document.getElementById('total').textContent = formatPrice(total);
+}
+
+function adjustQty(id, delta) {
+  let cart = JSON.parse(localStorage.getItem('nanolap_cart') || '[]');
+  const item = cart.find(i => i.id === id);
+  if (item) {
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+  }
+  localStorage.setItem('nanolap_cart', JSON.stringify(cart));
+  renderCart();
+  updateCartBadge();
+}
+
+function removeItem(id) {
+  let cart = JSON.parse(localStorage.getItem('nanolap_cart') || '[]');
+  cart = cart.filter(i => i.id !== id);
+  localStorage.setItem('nanolap_cart', JSON.stringify(cart));
+  renderCart();
+  updateCartBadge();
+  showToast('Item removed from cart');
+}
+
+function openCheckout() {
+  const cart = JSON.parse(localStorage.getItem('nanolap_cart') || '[]');
+  if (cart.length === 0) return;
+
+  const customer = getLoggedInCustomer();
+  if (!customer) {
+    showToast('Please log in to checkout', true);
+    setTimeout(() => {
+      window.location.href = 'login.html?redirect=cart.html';
+    }, 800);
+    return;
+  }
+
+  fillCheckoutForm(customer.user);
+
+  const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0) + 350;
+  document.getElementById('checkoutTotal').textContent = formatPrice(subtotal);
+  document.getElementById('checkoutItemsList').innerHTML = cart.map(i => `
+    <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:0.25rem 0;color:var(--text-secondary)">
+      <span>${i.name.substring(0,35)}... × ${i.qty}</span>
+      <span>${formatPrice(i.price * i.qty)}</span>
+    </div>`).join('');
+
+  document.getElementById('checkoutStep1').style.display = 'block';
+  document.getElementById('orderSuccess').style.display = 'none';
+  document.getElementById('checkoutModal').classList.add('open');
+}
+
+async function placeOrder() {
+  const customer = getLoggedInCustomer();
+  if (!customer) {
+    showToast('Please log in to place an order', true);
+    window.location.href = 'login.html?redirect=cart.html';
+    return;
+  }
+
+  const name = document.getElementById('chkName').value.trim();
+  const email = document.getElementById('chkEmail').value.trim();
+  const phone = document.getElementById('chkPhone').value.trim();
+  const address = document.getElementById('chkAddress').value.trim();
+  const payment = document.getElementById('chkPayment').value;
+
+  if (!name || !email || !phone || !address) {
+    showToast('Please fill in all the fields!', true);
+    return;
+  }
+
+  const cart = JSON.parse(localStorage.getItem('nanolap_cart') || '[]');
+  const cartItems = {};
+  cart.forEach(i => { cartItems[i.id] = i.qty; });
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.textContent = 'Placing Order...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${API}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${customer.token}`
+      },
+      body: JSON.stringify({ customerPhone: phone, shippingAddress: address, paymentMethod: payment, cartItems })
+    });
+
+    console.log('Order response status:', res.status);
+    const data = await res.json();
+    console.log('Order response data:', data);
+
+    if (res.status === 401 || res.status === 403) {
+      showToast(data.error || 'Please log in to place an order', true);
+      setTimeout(() => {
+        window.location.href = 'login.html?redirect=cart.html';
+      }, 800);
+      return;
+    }
+
+    if (res.ok) {
+      document.getElementById('orderNumberDisplay').textContent = `Order #${data.orderNumber}`;
+      document.getElementById('checkoutStep1').style.display = 'none';
+      document.getElementById('orderSuccess').style.display = 'block';
+      localStorage.removeItem('nanolap_cart');
+      updateCartBadge();
+    } else {
+      showToast(data.error || 'Could not place the order. Try again!', true);
+    }
+  } catch(e) {
+    console.error('Order error:', e);
+    showToast('Server error! Please check the backend.', true);
+  }
+  btn.textContent = '✅ Place Order';
+  btn.disabled = false;
+}
+
+renderCart();
+updateNavAuth();
+
+// Hide loading screen
+setTimeout(() => {
+  document.getElementById('loadingScreen').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('loadingScreen').style.display = 'none';
+  }, 500);
+}, 1000);
+</script>
+</body>
+</html>

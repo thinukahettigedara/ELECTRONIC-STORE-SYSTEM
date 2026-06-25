@@ -1,0 +1,15 @@
+com\nanolap\repository\ProductRepository.class
+com\nanolap\config\DataInitializer.class
+com\nanolap\repository\OrderRepository.class
+com\nanolap\model\OrderItem.class
+com\nanolap\controller\PageController.class
+com\nanolap\controller\ProductController.class
+com\nanolap\model\User.class
+com\nanolap\service\ProductService.class
+com\nanolap\model\Order.class
+com\nanolap\model\Product.class
+com\nanolap\controller\AuthController.class
+com\nanolap\NanolapApplication.class
+com\nanolap\repository\UserRepository.class
+com\nanolap\controller\OrderController.class
+com\nanolap\service\OrderService.class

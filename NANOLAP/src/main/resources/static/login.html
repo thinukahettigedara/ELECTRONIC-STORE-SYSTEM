@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - NANOLAP</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-primary); position: relative; overflow: hidden;">
+  <div style="position: absolute; inset: 0; background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none;"></div>
+  <div style="position: absolute; top: 20%; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%); pointer-events: none;"></div>
+  
+  <div style="position: relative; z-index: 1; width: 100%; max-width: 450px; padding: 2rem;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow-glow);">
+      
+      <!-- Logo -->
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div class="nav-logo" style="font-size: 2rem; margin-bottom: 0.5rem;">NANOLAP</div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Sign in to your account</p>
+      </div>
+
+      <!-- Login/Register Toggle -->
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: var(--bg-secondary); padding: 0.5rem; border-radius: 10px;">
+        <button id="loginToggle" style="flex: 1; padding: 0.5rem; border-radius: 6px; border: none; background: var(--accent-cyan); color: #000; font-family: var(--font-heading); font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.85rem;">Login</button>
+        <button id="registerToggle" style="flex: 1; padding: 0.5rem; border-radius: 6px; border: none; background: transparent; color: var(--text-secondary); font-family: var(--font-heading); font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.85rem;">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginForm">
+        <form onsubmit="handleLogin(event)" autocomplete="off">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="email" placeholder="Enter your email" required autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="password" placeholder="••••••••" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="checkout-btn" style="width: 100%; margin-top: 0;">Login</button>
+        </form>
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <a href="index.html" style="color: var(--text-secondary); font-size: 0.85rem; text-decoration: none;">← Back to Home</a>
+        </div>
+      </div>
+
+      <!-- Registration Form -->
+      <div id="registerForm" style="display: none;">
+        <form onsubmit="handleRegister(event)" autocomplete="off">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="regName" placeholder="John Doe" required autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="regEmail" placeholder="customer@example.com" required autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="regPassword" placeholder="••••••••" required autocomplete="new-password">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" class="form-input" id="regConfirmPassword" placeholder="••••••••" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="checkout-btn" style="width: 100%; margin-top: 0;">Create Account</button>
+        </form>
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <a href="index.html" style="color: var(--text-secondary); font-size: 0.85rem; text-decoration: none;">← Back to Home</a>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div id="errorMessage" style="display: none; margin-top: 1rem; padding: 0.75rem; background: rgba(255, 45, 120, 0.1); border: 1px solid rgba(255, 45, 120, 0.3); border-radius: 8px; color: var(--accent-pink); font-size: 0.85rem; text-align: center;"></div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+// Add event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  const loginToggle = document.getElementById('loginToggle');
+  const registerToggle = document.getElementById('registerToggle');
+
+  if (loginToggle) {
+    loginToggle.addEventListener('click', function() {
+      switchAuthMode('login');
+    });
+  }
+
+  if (registerToggle) {
+    registerToggle.addEventListener('click', function() {
+      switchAuthMode('register');
+    });
+  }
+});
+
+function switchAuthMode(mode) {
+  const loginToggle = document.getElementById('loginToggle');
+  const registerToggle = document.getElementById('registerToggle');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const errorMessage = document.getElementById('errorMessage');
+
+  errorMessage.style.display = 'none';
+
+  if (mode === 'login') {
+    loginToggle.style.background = 'var(--accent-cyan)';
+    loginToggle.style.color = '#000';
+    registerToggle.style.background = 'transparent';
+    registerToggle.style.color = 'var(--text-secondary)';
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+  } else {
+    registerToggle.style.background = 'var(--accent-cyan)';
+    registerToggle.style.color = '#000';
+    loginToggle.style.background = 'transparent';
+    loginToggle.style.color = 'var(--text-secondary)';
+    registerForm.style.display = 'block';
+    loginForm.style.display = 'none';
+  }
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const errorMessage = document.getElementById('errorMessage');
+
+  console.log('Login attempt:', { email });
+
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    console.log('Response status:', res.status);
+    const data = await res.json();
+    console.log('Response data:', data);
+
+    if (res.ok) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      console.log('Token and user stored in localStorage');
+
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+
+      if (redirect && data.user.role === 'customer') {
+        window.location.href = redirect;
+      } else if (data.user.role === 'admin') {
+        console.log('Redirecting to admin dashboard');
+        window.location.href = 'admin.html';
+      } else {
+        console.log('Redirecting to customer dashboard');
+        window.location.href = 'customer-dashboard.html';
+      }
+    } else {
+      console.error('Login failed:', data.message);
+      errorMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+      errorMessage.style.display = 'block';
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    errorMessage.textContent = 'Server error. Please try again later.';
+    errorMessage.style.display = 'block';
+  }
+}
+
+async function handleRegister(event) {
+  event.preventDefault();
+
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirmPassword = document.getElementById('regConfirmPassword').value;
+  const errorMessage = document.getElementById('errorMessage');
+
+  if (!name || !email || !password || !confirmPassword) {
+    errorMessage.textContent = 'All fields are required.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    errorMessage.textContent = 'Passwords do not match.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
+  if (password.length < 6) {
+    errorMessage.textContent = 'Password must be at least 6 characters.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password, role: 'customer' })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      errorMessage.style.background = 'rgba(0, 255, 136, 0.1)';
+      errorMessage.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+      errorMessage.style.color = 'var(--accent-green)';
+      errorMessage.textContent = 'Registration successful! You can now login.';
+      errorMessage.style.display = 'block';
+
+      // Clear form
+      document.getElementById('regName').value = '';
+      document.getElementById('regEmail').value = '';
+      document.getElementById('regPassword').value = '';
+      document.getElementById('regConfirmPassword').value = '';
+
+      // Switch to login after 2 seconds
+      setTimeout(() => {
+        switchAuthMode('login');
+        errorMessage.style.display = 'none';
+        errorMessage.style.background = 'rgba(255, 45, 120, 0.1)';
+        errorMessage.style.borderColor = 'rgba(255, 45, 120, 0.3)';
+        errorMessage.style.color = 'var(--accent-pink)';
+      }, 2000);
+    } else {
+      errorMessage.textContent = data.message || 'Registration failed. Please try again.';
+      errorMessage.style.display = 'block';
+    }
+  } catch (error) {
+    errorMessage.textContent = 'Server error. Please try again later.';
+    errorMessage.style.display = 'block';
+  }
+}
+
+// Hide loading screen
+setTimeout(() => {
+  document.getElementById('loadingScreen').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('loadingScreen').style.display = 'none';
+  }, 500);
+}, 1000);
+</script>
+</body>
+</html>
