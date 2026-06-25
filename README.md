@@ -6,44 +6,44 @@ The system also includes an admin panel for managing products, inventory, and cu
 👤 Customer Features
 
 
-Browse electronic products (smartphones, laptops, audio, tablets, TVs, etc.)
-Search and filter products by category
-View featured and latest arrivals
-Register and log in as a customer
-Manage profile (name, phone, address) from a customer dashboard
-Add items to cart
-Place orders online and view past order history
-Easy and responsive user interface
+Browse electronic products (smartphones, laptops, audio, tablets, TVs, etc.).
+Search and filter products by category.
+View featured and latest arrivals.
+Register and log in as a customer.
+Manage profile (name, phone, address) from a customer dashboard.
+Add items to cart.
+Place orders online and view past order history.
+Easy and responsive user interface.
 
 
 🛠️ Admin Features
 
 
-Add, update, and soft-delete products
-Manage stock quantity and product availability
-View all customer orders
-Update order status (e.g. PENDING → SHIPPED → DELIVERED)
+Add, update, and soft-delete products.
+Manage stock quantity and product availability.
+View all customer orders.
+Update order status (e.g. PENDING → SHIPPED → DELIVERED).
 
 
 🧑‍💻 Tech Stack
 
 
-Java 17 + Spring Boot 3.2 (Spring Web, Spring Data JPA, Validation)
-Thymeleaf (templating engine)
-Microsoft SQL Server (primary database via SSMS)
-H2 (in-memory database, for local debugging)
-HTML / CSS / JavaScript (static frontend, no framework)
-Maven (build tool)
+Java 17 + Spring Boot 3.2 (Spring Web, Spring Data JPA, Validation).
+Thymeleaf (templating engine).
+Microsoft SQL Server (primary database via SSMS).
+H2 (in-memory database, for local debugging).
+HTML / CSS / JavaScript (static frontend, no framework).
+Maven (build tool).
 
 
 📊 Languages Used
 
-LanguagePurposeJavaBackend logic — models, repositories, services, REST controllers
-HTMLStatic frontend pages (homepage, shop, cart, login, dashboard, admin)
-CSS Styling for all static pages
-JavaScriptFrontend interactivity (cart, search, API calls)
-SQLDatabase schema setup (database-setup.sql)
-PropertiesApp configuration (application.properties)
+LanguagePurposeJavaBackend logic — models, repositories, services, REST controllers.
+HTMLStatic frontend pages (homepage, shop, cart, login, dashboard, admin).
+CSS Styling for all static pages.
+JavaScriptFrontend interactivity (cart, search, API calls).
+SQLDatabase schema setup (database-setup.sql).
+PropertiesApp configuration (application.properties).
 
 📱 Installation
 
